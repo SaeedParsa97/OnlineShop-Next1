@@ -1,11 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import BarsIcon from "./icons/Bars";
+import { CartContext } from "@/contexts/CartContext";
+import { enTofa } from "@/utils/Utilities";
 
 export default function Header() {
   const [isActiveMobile, setIsActiveMobile] = useState(false);
+
+  const {cart} = useContext(CartContext)
 
   return (
     <header className="header">
@@ -24,6 +28,11 @@ export default function Header() {
           <Link className="nav-link" href={"/cart"}>
             سبد خرید
           </Link>
+          {
+            cart.length > 0 
+              ? <span className="nav-cart-num">{enTofa(cart.length)}</span>
+              :""
+          }
         </nav>
         <button
           onClick={() => setIsActiveMobile((prev) => !prev)}

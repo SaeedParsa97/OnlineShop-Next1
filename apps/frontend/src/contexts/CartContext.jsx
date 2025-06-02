@@ -1,11 +1,23 @@
 "use client";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export const CartContext = createContext();
 
-export function CartProvider({children}) {
+export function CartProvider({ children }) {
   // state cart to store all selected products
   const [cart, setCart] = useState([]);
+
+  useEffect(() => {
+    const cartlocal = JSON.parse(localStorage.getItem("cart"));
+    if (cartlocal) {
+      setCart(cartlocal);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
+
 
   // function to add products to cart
   function addToCart(product) {
@@ -32,24 +44,28 @@ export function CartProvider({children}) {
   function updateQuantity(productId, newQuantity) {
     setCart((prev) =>
       prev.map((item) =>
-        item._id == productId 
-            ? { ...item, quantity: newQuantity } 
-            : item
+        item._id == productId ? { ...item, quantity: newQuantity } : item
       )
     );
   }
 
   // function to sum all cart products price
-  function getTotalPrice(){
-    let totalPrice=0;
-    cart.forEach(item=> totalPrice += item.quantity * item.price)
-    return totalPrice
+  function getTotalPrice() {
+    let totalPrice = 0;
+    cart.forEach((item) => (totalPrice += item.quantity * item.price));
+    return totalPrice;
   }
 
+  // function to empty form and clear cart
+  function clearCart(){
+    setCart([])
+  }
 
-  return(
-    <CartContext.Provider value={{cart, addToCart, removeFromCart, updateQuantity, getTotalPrice}}>
-        {children}
+  return (
+    <CartContext.Provider
+      value={{ cart, addToCart, removeFromCart, updateQuantity, getTotalPrice, clearCart }}
+    >
+      {children}
     </CartContext.Provider>
-  )
+  );
 }

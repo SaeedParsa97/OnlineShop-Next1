@@ -1,7 +1,7 @@
 import ProductList from "./ProductList";
 
 export default async function LatestProducts({ searchParams }) {
-  const category = searchParams?.category;
+  const category = searchParams?.category
 
   const url = category
     ? `http://localhost:3000/api/products?category=${category}`
